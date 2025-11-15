@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:klasifikasi_felidae/screens/login_screen.dart';
+import 'package:klasifikasi_felidae/screens/opening_screen.dart';
 import 'package:tflite_web/tflite_web.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.web);
-  await TFLiteWeb.initializeUsingCDN();
+  
   runApp(MainApp());
 }
 
@@ -97,7 +97,7 @@ class MainApp extends StatelessWidget {
             title: 'Klasifikasi Kucing Besar',
             theme: light,
             darkTheme: dark,
-            home: LoginScreen(),
+            home: OpeningScreen(),
           ),
         );
       },
