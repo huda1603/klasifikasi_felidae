@@ -44,9 +44,11 @@ Halaman **History** berfungsi sebagai log aktivitas. Pengguna dapat melihat dan 
 Halaman **Profile** memungkinkan pengguna untuk mengelola informasi akun mereka, khususnya:
 
 * **Edit Username:** Mengubah nama pengguna (username) yang digunakan dalam aplikasi.
-
-## Link Drive
-https://drive.google.com/drive/folders/1sNcZIZ87_ylXS3AMV_urL9z_dKyWpAdb?usp=drive_link
 * **Edit Foto Profil:** Mengganti foto profil pengguna. Opsi untuk mengganti foto profil dapat diambil dari:
     * **Penyimpanan** perangkat lokal.
     * **Carousel Slider** yang menyediakan pilihan foto profil default.
+
+## Link Drive
+https://drive.google.com/drive/folders/1sNcZIZ87_ylXS3AMV_urL9z_dKyWpAdb?usp=drive_link
+
+
