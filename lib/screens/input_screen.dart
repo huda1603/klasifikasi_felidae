@@ -29,6 +29,11 @@ class _InputScreenState extends State<InputScreen> {
   ThemeData dark = darks;
   var light = ThemeData.light();
 
+  String? resultClass;
+  String? resultDesc;
+
+  bool isLoadingClassification = false;
+
   Uint8List? _imageData;
 
   CollectionReference dataDiri = FirebaseFirestore.instance.collection("users");
@@ -86,6 +91,24 @@ class _InputScreenState extends State<InputScreen> {
         onImagePicked(data);
       });
     });
+  }
+
+  Future<void> addDataClassification() async {
+    try {
+      await FirebaseFirestore.instance.collection('species_collection').add({
+        'img_class': base64Encode(_imageData!),
+        'species': resultClass ?? 'Puma',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Berhasil menambah data!"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -292,15 +315,6 @@ class _InputScreenState extends State<InputScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Hi, Kelompok 2👋​",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontStyle: FontStyle.normal,
-                            fontFamily: 'Serif',
-                          ),
-                        ),
                         FutureBuilder<String>(
                           future: getUsername(),
                           builder: (context, snapshot) {
@@ -336,6 +350,15 @@ class _InputScreenState extends State<InputScreen> {
                               ),
                             );
                           },
+                        ),
+                        Text(
+                          "Welcome back",
+                          style: TextStyle(
+                            color: Colors.white24,
+                            fontSize: 12,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'Serif',
+                          ),
                         ),
                       ],
                     ),
@@ -525,34 +548,51 @@ class _InputScreenState extends State<InputScreen> {
               children: [
                 Expanded(
                   flex: 3,
-                  child: GestureDetector(
-                    onTap: () async {
-                      setState(() {
-                        isClassification = !isClassification;
-                      });
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 9,
-                        vertical: 12,
-                      ),
-                      decoration: ShapeDecoration(
-                        shape: StadiumBorder(),
-                        color: Color(0xFF926247),
-                      ),
-                      child: Text(
-                        "Start Classification",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          fontStyle: FontStyle.normal,
-                          fontFamily: 'Serif',
-                        ),
-                      ),
-                    ),
-                  ),
+                  child:
+                      isLoadingClassification == false
+                          ? GestureDetector(
+                            onTap: () async {
+                              setState(() {
+                                isLoadingClassification = true;
+                              });
+                              await addDataClassification();
+                              setState(() {
+                                isLoadingClassification = false;
+                              });
+                              setState(() {
+                                isClassification = !isClassification;
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 12,
+                              ),
+                              decoration: ShapeDecoration(
+                                shape: StadiumBorder(),
+                                color: Color(0xFF926247),
+                              ),
+                              child: Text(
+                                "Start Classification",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  fontStyle: FontStyle.normal,
+                                  fontFamily: 'Serif',
+                                ),
+                              ),
+                            ),
+                          )
+                          : const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          ),
                 ),
                 SizedBox(width: 7),
                 Expanded(
@@ -713,13 +753,13 @@ class _InputScreenState extends State<InputScreen> {
                 aspectRatio: 3 / 2,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(50),
-                  child: Image(image: AssetImage("leopard_in_the_wild.jpeg")),
+                  child: Image.memory(_imageData!),
                 ),
               ),
             ),
             Center(
               child: Text(
-                "Image Detected 🟢​",
+                "Image Detected ~",
                 style: TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.bold,
@@ -751,16 +791,20 @@ class _InputScreenState extends State<InputScreen> {
                   ),
                 ),
                 child: Row(
-                  spacing: 10,
+                  spacing: 7,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(backgroundColor: Colors.white, radius: 18),
+                    Image(
+                      width: 38,
+                      height: 38,
+                      image: AssetImage("assets/logo.png"),
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 7),
                         Text(
-                          "Puma",
+                          resultClass ?? 'Unknown',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -771,7 +815,8 @@ class _InputScreenState extends State<InputScreen> {
                         ),
                         SizedBox(height: 2),
                         Text(
-                          "Juga dikenal sebagai Cougar atau Mountain Lion.\nPuma adalah kucing besar yang sangat adaptif dan\nmemiliki rentang habitat terluas di antara\nsemua mamalia darat liar di belahan Barat.",
+                          resultDesc ??
+                              "Juga dikenal sebagai Cougar atau Mountain Lion.\nPuma adalah kucing besar yang sangat adaptif dan\nmemiliki rentang habitat terluas di antara\nsemua mamalia darat liar di belahan Barat.",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 10,
