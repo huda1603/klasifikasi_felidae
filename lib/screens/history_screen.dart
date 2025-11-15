@@ -61,6 +61,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return doc.data()?['username'] ?? "";
   }
 
+  CollectionReference? dataSpecies = FirebaseFirestore.instance.collection(
+    "species_collection",
+  );
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -71,7 +75,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          HistoryResult(dark: dark, width: width, height: height),
+          dataSpecies != null
+              ? HistoryResult(dark: dark, width: width, height: height)
+              : Text("Belum Ada Datanya", style: dark.textTheme.headlineLarge),
           if (width <= 600 && width < height)
             Positioned(
               left: 0,
@@ -262,15 +268,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Hi, Kelompok 2👋​",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontStyle: FontStyle.normal,
-                            fontFamily: 'Serif',
-                          ),
-                        ),
                         FutureBuilder<String>(
                           future: getUsername(),
                           builder: (context, snapshot) {
@@ -306,6 +303,15 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
                             );
                           },
+                        ),
+                        Text(
+                          "Welcome back",
+                          style: TextStyle(
+                            color: Colors.white24,
+                            fontSize: 12,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'Serif',
+                          ),
                         ),
                       ],
                     ),
