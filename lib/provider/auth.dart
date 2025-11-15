@@ -1,7 +1,9 @@
+import 'dart:convert' show base64Encode;
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class Auth {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,12 +14,15 @@ class Auth {
         email: email,
         password: password,
       );
+      final byteData = await rootBundle.load('assets/logo.png');
+      final bytes = byteData.buffer.asUint8List();
+      final base64String = base64Encode(bytes);
       await FirebaseFirestore.instance
           .collection('users')
           .doc(cred.user!.uid)
           .set({
             'username': 'User ${Random().nextInt(1000)}',
-            'img': '',
+            'img': base64String,
             'uid': cred.user!.uid,
             'createdAt': FieldValue.serverTimestamp(),
           });
